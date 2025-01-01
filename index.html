@@ -21,8 +21,15 @@
             <button id="search-button"><i class="fas fa-search"></i></button>
         </div>
         <button id="theme-toggle"><i class="fas fa-moon"></i></button>
+        <button id="settings-button"><i class="fas fa-cog"></i></button>
+        <button id="profile-button"><i class="fas fa-user"></i></button>
     </header>
+    <div id="user-greeting"></div>
     <main>
+        <div id="loading-spinner" class="loading-spinner hidden">
+            <div class="spinner"></div>
+        </div>
+        <div id="error-container" class="error-container hidden"></div>
         <div id="tmdb-section" class="section active">
             <h2>International Movies</h2>
             <div id="movie-grid"></div>
@@ -45,8 +52,65 @@
                     <p id="modal-overview"></p>
                     <button id="watch-trailer"><i class="fas fa-play"></i> Watch Trailer</button>
                     <button id="watch-movie"><i class="fas fa-film"></i> Watch Movie</button>
+                    <div id="movie-details"></div>
                 </div>
             </div>
+        </div>
+    </div>
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Settings</h2>
+            <div class="settings-options">
+                <div class="setting">
+                    <label for="default-section">Default Section:</label>
+                    <select id="default-section">
+                        <option value="international">International Movies</option>
+                        <option value="nollywood">Nollywood Movies</option>
+                    </select>
+                </div>
+                <div class="setting">
+                    <label for="movies-per-page">Movies per page:</label>
+                    <input type="number" id="movies-per-page" min="10" max="50" step="5">
+                </div>
+                <div class="setting">
+                    <label for="auto-play-trailers">Auto-play trailers:</label>
+                    <input type="checkbox" id="auto-play-trailers">
+                </div>
+                <div class="setting">
+                    <label>Genres:</label>
+                    <div id="genre-checkboxes">
+                        <!-- Genre checkboxes will be dynamically added here -->
+                    </div>
+                </div>
+                <div class="setting">
+                    <label for="dark-mode">Dark Mode:</label>
+                    <input type="checkbox" id="dark-mode">
+                </div>
+            </div>
+            <button id="save-settings">Save Settings</button>
+        </div>
+    </div>
+    <div id="profile-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>User Profile</h2>
+            <form id="profile-form">
+                <div class="form-group">
+                    <label for="profile-name">Name:</label>
+                    <input type="text" id="profile-name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="profile-email">Email:</label>
+                    <input type="email" id="profile-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="profile-image">Profile Image:</label>
+                    <input type="file" id="profile-image" name="image" accept="image/*">
+                </div>
+                <button type="submit">Save Profile</button>
+            </form>
+            <div id="profile-display"></div>
         </div>
     </div>
     <script src="https://www.youtube.com/iframe_api"></script>
