@@ -1,5 +1,5 @@
 const TMDB_API_KEY = '4047600e7b714de665db30e862139d92';
-const YOUTUBE_API_KEY = 'AIzaSyB073rVyNEwqTlWDoodMMIAwKcasgsPKuM';
+const YOUTUBE_API_KEY = 'AIzaSyDQzMwNQpOvL7CPmT2Fhlxi0gp99dP4piM';
 const DAILYMOTION_API_KEY = '3d76cb201c8f34c0f89b';
 const DAILYMOTION_API_SECRET = '2ce48fb77a5bd6b175edd2d37f354c12d508f2c5';
 
@@ -12,14 +12,16 @@ const movieGrid = document.getElementById('movie-grid');
 const nollywoodGrid = document.getElementById('nollywood-grid');
 const searchInput = document.getElementById('search-input');
 const searchButton = document.getElementById('search-button');
-const movieModal = document.getElementById('movie-modal');
-const settingsModal = document.getElementById('settings-modal');
-const profileModal = document.getElementById('profile-modal');
+const voiceSearchButton = document.getElementById('voice-search-button');
+const moviePage = document.getElementById('movie-page');
+const backButton = document.getElementById('back-button');
 const modalTitle = document.getElementById('modal-title');
 const modalOverview = document.getElementById('modal-overview');
 const modalPoster = document.getElementById('modal-poster');
 const watchTrailerBtn = document.getElementById('watch-trailer');
 const watchMovieBtn = document.getElementById('watch-movie');
+const watchLaterBtn = document.getElementById('watch-later');
+const favoriteBtn = document.getElementById('favorite');
 const closeBtn = document.getElementsByClassName('close');
 const sectionToggle = document.getElementById('section-toggle');
 const themeToggle = document.getElementById('theme-toggle');
@@ -31,6 +33,11 @@ const profileDisplay = document.getElementById('profile-display');
 const genreCheckboxes = document.getElementById('genre-checkboxes');
 const loadingSpinner = document.getElementById('loading-spinner');
 const errorContainer = document.getElementById('error-container');
+const settingsModal = document.getElementById('settings-modal');
+const profileModal = document.getElementById('profile-modal');
+const watchLaterListBtn = document.getElementById('watch-later-list');
+const favoritesListBtn = document.getElementById('favorites-list');
+const watchHistoryListBtn = document.getElementById('watch-history-list');
 
 let currentPage = 1;
 let currentNollywoodPage = '';
@@ -40,6 +47,7 @@ let dailymotionPlayer;
 let isLoading = false;
 let nollywoodMovies = [];
 let genres = [];
+let currentMovie = null;
 
 // Load user settings
 let userSettings = JSON.parse(localStorage.getItem('sonixMoviesSettings')) || {
@@ -56,6 +64,14 @@ let userProfile = JSON.parse(localStorage.getItem('sonixMoviesProfile')) || {
     email: '',
     image: ''
 };
+
+// Load user lists
+let watchLaterList = JSON.parse(localStorage.getItem('sonixMoviesWatchLater')) || [];
+let watchHistoryList = JSON.parse(localStorage.getItem('sonixMoviesWatchHistory')) || [];
+let favoritesList = JSON.parse(localStorage.getItem('sonixMoviesFavorites')) || [];
+
+// Load video progress
+let videoProgress = JSON.parse(localStorage.getItem('sonixMoviesVideoProgress')) || {};
 
 // Initialize app with user settings
 async function initApp() {
@@ -89,24 +105,39 @@ async function initApp() {
 
 // Event listeners
 if (searchButton) {
-    searchButton.addEventListener('click', () => {
-        currentPage = 1;
-        currentNollywoodPage = '';
-        currentSearchQuery = searchInput ? searchInput.value : '';
-        if (sectionToggle.checked) {
-            fetchNollywoodMovies(currentSearchQuery);
-        } else {
-            searchMovies();
+    searchButton.addEventListener('click', performSearch);
+}
+
+if (searchInput) {
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            performSearch();
         }
     });
 }
 
-Array.from(closeBtn).forEach(btn => {
-    btn.addEventListener('click', closeModal);
+if (voiceSearchButton) {
+    voiceSearchButton.addEventListener('click', startVoiceSearch);
+}
+
+if (backButton) {
+    backButton.addEventListener('click', closeMoviePage);
+}
+
+if (watchLaterBtn) {
+    watchLaterBtn.addEventListener('click', () => toggleWatchLater(currentMovie));
+}
+
+if (favoriteBtn) {
+    favoriteBtn.addEventListener('click', () => toggleFavorite(currentMovie));
+}
+
+document.querySelectorAll('.close').forEach(closeBtn => {
+    closeBtn.addEventListener('click', closeModal);
 });
 
 window.addEventListener('click', (event) => {
-    if (event.target === movieModal || event.target === settingsModal || event.target === profileModal) {
+    if (event.target === settingsModal || event.target === profileModal) {
         closeModal();
     }
 });
@@ -135,15 +166,68 @@ if (profileForm) {
     profileForm.addEventListener('submit', saveProfile);
 }
 
+if (watchLaterListBtn) {
+    watchLaterListBtn.addEventListener('click', showWatchLaterList);
+}
+
+if (favoritesListBtn) {
+    favoritesListBtn.addEventListener('click', showFavoritesList);
+}
+
+if (watchHistoryListBtn) {
+    watchHistoryListBtn.addEventListener('click', showWatchHistoryList);
+}
+
 window.addEventListener('scroll', () => {
     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500 && !isLoading) {
         if (sectionToggle.checked) {
-            fetchNollywoodMovies('Nollywood movie', currentNollywoodPage);
+            fetchNollywoodMovies(currentSearchQuery, currentNollywoodPage);
         } else {
             loadMoreMovies();
         }
     }
 });
+
+// Hamburger menu functionality
+const hamburgerMenu = document.getElementById('hamburger-menu');
+const mobileNav = document.querySelector('.mobile-nav');
+
+hamburgerMenu.addEventListener('click', () => {
+    mobileNav.classList.toggle('active');
+});
+
+// Mobile navigation buttons
+const mobileWatchLaterBtn = document.getElementById('mobile-watch-later-list');
+const mobileFavoritesBtn = document.getElementById('mobile-favorites-list');
+const mobileSettingsBtn = document.getElementById('mobile-settings-button');
+const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
+const mobileProfileBtn = document.getElementById('mobile-profile-button');
+
+mobileWatchLaterBtn.addEventListener('click', () => {
+    showWatchLaterList();
+    mobileNav.classList.remove('active');
+});
+
+mobileFavoritesBtn.addEventListener('click', () => {
+    showFavoritesList();
+    mobileNav.classList.remove('active');
+});
+
+mobileSettingsBtn.addEventListener('click', () => {
+    openSettingsModal();
+    mobileNav.classList.remove('active');
+});
+
+mobileThemeToggle.addEventListener('click', () => {
+    toggleTheme();
+    mobileNav.classList.remove('active');
+});
+
+mobileProfileBtn.addEventListener('click', () => {
+    openProfileModal();
+    mobileNav.classList.remove('active');
+});
+
 
 // Show loading spinner
 function showLoadingSpinner() {
@@ -165,6 +249,40 @@ function showErrorMessage(message) {
 function hideErrorMessage() {
     errorContainer.textContent = '';
     errorContainer.classList.add('hidden');
+}
+
+// Perform search
+function performSearch() {
+    currentPage = 1;
+    currentNollywoodPage = '';
+    currentSearchQuery = searchInput ? searchInput.value : '';
+    if (sectionToggle.checked) {
+        fetchNollywoodMovies(currentSearchQuery);
+    } else {
+        searchMovies();
+    }
+}
+
+// Start voice search
+function startVoiceSearch() {
+    if ('webkitSpeechRecognition' in window) {
+        const recognition = new webkitSpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.start();
+
+        recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript;
+            searchInput.value = transcript;
+            performSearch();
+        };
+
+        recognition.onerror = function(event) {
+            console.error('Speech recognition error:', event.error);
+            showErrorMessage('Voice search failed. Please try again.');
+        };
+    } else {
+        showErrorMessage('Voice search is not supported in your browser.');
+    }
 }
 
 // Fetch popular movies
@@ -199,17 +317,17 @@ async function fetchPopularMovies() {
 
 // Fetch Nollywood movies
 async function fetchNollywoodMovies(query, pageToken = '') {
-    if (isLoading || nollywoodMovies.length >= userSettings.moviesPerPage) return;
+    if (isLoading) return;
     isLoading = true;
     showLoadingSpinner();
     hideErrorMessage();
     try {
-        const url = `${YOUTUBE_BASE_URL}/search?part=snippet&q=${encodeURIComponent(query)}&key=${YOUTUBE_API_KEY}&pageToken=${pageToken}&type=video&videoDuration=long&maxResults=${userSettings.moviesPerPage - nollywoodMovies.length}`;
+        const url = `${YOUTUBE_BASE_URL}/search?part=snippet&q=${encodeURIComponent(query + " Nollywood movie")}&key=${YOUTUBE_API_KEY}&pageToken=${pageToken}&type=video&videoDuration=long&maxResults=${userSettings.moviesPerPage}`;
         const response = await fetch(url);
         if (!response.ok) throw new Error('Failed to fetch Nollywood movies');
         const data = await response.json();
         if (nollywoodGrid) {
-            nollywoodMovies = [...nollywoodMovies, ...data.items];
+            nollywoodMovies = pageToken === '' ? data.items : [...nollywoodMovies, ...data.items];
             displayNollywoodMovies(data.items, pageToken === '');
             currentNollywoodPage = data.nextPageToken || '';
         } else {
@@ -259,15 +377,6 @@ function updateSelectedGenres() {
     });
 }
 
-// Display random Nollywood movie
-function displayRandomNollywoodMovie() {
-    if (nollywoodMovies.length > 0) {
-        const randomIndex = Math.floor(Math.random() * nollywoodMovies.length);
-        const randomMovie = nollywoodMovies[randomIndex];
-        openNollywoodModal(randomMovie);
-    }
-}
-
 // Search movies
 async function searchMovies() {
     if (currentSearchQuery) {
@@ -315,14 +424,21 @@ function displayMovies(movies, clearExisting = true) {
     movies.forEach(movie => {
         const movieCard = document.createElement('div');
         movieCard.classList.add('movie-card');
+        movieCard.dataset.movieId = movie.id;
+        const progress = videoProgress[movie.id] ? videoProgress[movie.id].progress : 0;
         movieCard.innerHTML = `
             <img src="${movie.poster_path ? IMAGE_BASE_URL + movie.poster_path : 'placeholder.jpg'}" alt="${movie.title}">
             <h3>${movie.title}</h3>
             <p><i class="fas fa-star"></i> ${movie.vote_average.toFixed(1)}</p>
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: ${progress}%"></div>
+            </div>
         `;
-        movieCard.addEventListener('click', () => openModal(movie));
+        movieCard.addEventListener('click', () => openMoviePage(movie));
         movieGrid.appendChild(movieCard);
     });
+    updateWatchLaterButtons();
+    updateFavoriteButtons();
 }
 
 // Display Nollywood movies
@@ -341,29 +457,37 @@ function displayNollywoodMovies(movies, clearExisting = true) {
         const thumbnailUrl = movie.snippet.thumbnails.high.url;
         const channelTitle = movie.snippet.channelTitle;
         const publishedAt = new Date(movie.snippet.publishedAt).toLocaleDateString();
+        const progress = videoProgress[videoId] ? videoProgress[videoId].progress : 0;
 
         const movieCard = document.createElement('div');
         movieCard.classList.add('movie-card');
+        movieCard.dataset.movieId = videoId;
         
         movieCard.innerHTML = `
             <img src="${thumbnailUrl}" alt="${title}">
             <h3>${title}</h3>
             <p><i class="fas fa-user"></i> ${channelTitle}</p>
             <p><i class="fas fa-calendar-alt"></i> ${publishedAt}</p>
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: ${progress}%"></div>
+            </div>
         `;
 
-        movieCard.addEventListener('click', () => openNollywoodModal(movie));
+        movieCard.addEventListener('click', () => openNollywoodMoviePage(movie));
         nollywoodGrid.appendChild(movieCard);
     });
+    updateWatchLaterButtons();
+    updateFavoriteButtons();
 }
 
-// Open modal
-async function openModal(movie) {
-    clearModalContent();
+// Open movie page
+async function openMoviePage(movie) {
+    clearMoviePageContent();
+    currentMovie = movie;
     modalTitle.textContent = movie.title;
     modalOverview.textContent = movie.overview;
     modalPoster.src = movie.poster_path ? IMAGE_BASE_URL + movie.poster_path : 'placeholder.jpg';
-    movieModal.style.display = 'block';
+    moviePage.classList.remove('hidden');
 
     showLoadingSpinner();
     hideErrorMessage();
@@ -396,6 +520,31 @@ async function openModal(movie) {
                 watchMovieBtn.textContent = 'Full Movie Unavailable';
             }
         }
+
+        updateWatchLaterButton(movie);
+        updateFavoriteButton(movie);
+
+        // Set up progress bar
+        const progressBarContainer = document.querySelector('.progress-bar-container');
+        const progressBar = progressBarContainer.querySelector('.progress-bar');
+        const savedProgress = videoProgress[movie.id] ? videoProgress[movie.id].progress : 0;
+        progressBar.style.width = `${savedProgress}%`;
+
+        // Set up continue watching
+        if (savedProgress > 0 && savedProgress < 100) {
+            const continueBtn = document.createElement('button');
+            continueBtn.textContent = 'Continue Watching';
+            continueBtn.classList.add('continue-btn');
+            continueBtn.onclick = () => {
+                if (dailymotionVideoId) {
+                    playDailymotionMovie(dailymotionVideoId, savedProgress);
+                } else if (youtubeFullMovieId) {
+                    playYouTubeMovie(youtubeFullMovieId, savedProgress);
+                }
+            };
+            document.querySelector('.button-container').appendChild(continueBtn);
+        }
+
     } catch (error) {
         console.error('Error loading movie details:', error);
         showErrorMessage('Failed to load movie details. Please try again later.');
@@ -410,13 +559,14 @@ async function openModal(movie) {
     watchMovieBtn.style.display = 'inline-block';
 }
 
-// Open Nollywood modal
-function openNollywoodModal(movie) {
-    clearModalContent();
+// Open Nollywood movie page
+function openNollywoodMoviePage(movie) {
+    clearMoviePageContent();
+    currentMovie = movie;
     modalTitle.textContent = movie.snippet.title;
     modalOverview.textContent = movie.snippet.description;
     modalPoster.src = movie.snippet.thumbnails.high.url;
-    movieModal.style.display = 'block';
+    moviePage.classList.remove('hidden');
 
     watchTrailerBtn.onclick = () => playYouTubeTrailer(`https://www.youtube.com/watch?v=${movie.id.videoId}`);
     watchTrailerBtn.disabled = false;
@@ -427,10 +577,28 @@ function openNollywoodModal(movie) {
     }
     
     watchMovieBtn.style.display = 'none';
+
+    updateWatchLaterButton(movie);
+    updateFavoriteButton(movie);
+
+    // Set up progress bar
+    const progressBarContainer = document.querySelector('.progress-bar-container');
+    const progressBar = progressBarContainer.querySelector('.progress-bar');
+    const savedProgress = videoProgress[movie.id.videoId] ? videoProgress[movie.id.videoId].progress : 0;
+    progressBar.style.width = `${savedProgress}%`;
+
+    // Set up continue watching
+    if (savedProgress > 0 && savedProgress < 100) {
+        const continueBtn = document.createElement('button');
+        continueBtn.textContent = 'Continue Watching';
+        continueBtn.classList.add('continue-btn');
+        continueBtn.onclick = () => playYouTubeTrailer(`https://www.youtube.com/watch?v=${movie.id.videoId}`, savedProgress);
+        document.querySelector('.button-container').appendChild(continueBtn);
+    }
 }
 
-// Clear modal content
-function clearModalContent() {
+// Clear movie page content
+function clearMoviePageContent() {
     modalTitle.textContent = '';
     modalOverview.textContent = '';
     modalPoster.src = '';
@@ -442,14 +610,23 @@ function clearModalContent() {
     if (dailymotionPlayer) {
         dailymotionPlayer.pause();
     }
+    const continueBtn = document.querySelector('.continue-btn');
+    if (continueBtn) {
+        continueBtn.remove();
+    }
+}
+
+// Close movie page
+function closeMoviePage() {
+    moviePage.classList.add('hidden');
+    clearMoviePageContent();
 }
 
 // Close modal
 function closeModal() {
-    movieModal.style.display = 'none';
     settingsModal.style.display = 'none';
     profileModal.style.display = 'none';
-    clearModalContent();
+    moviePage.classList.add('hidden');
 }
 
 // Fetch movie details
@@ -505,7 +682,7 @@ async function fetchYouTubeTrailer(movieTitle) {
 }
 
 // Play YouTube trailer
-function playYouTubeTrailer(trailerUrl) {
+function playYouTubeTrailer(trailerUrl, startTime = 0) {
     const videoId = trailerUrl.split('v=')[1];
     modalPoster.style.display = 'none';
     if (!youtubePlayer) {
@@ -513,21 +690,33 @@ function playYouTubeTrailer(trailerUrl) {
             height: '360',
             width: '640',
             videoId: videoId,
+            playerVars: {
+                'autoplay': 1,
+                'controls': 1,
+                'rel': 0,
+                'fs': 1,
+                'start': Math.floor(startTime)
+            },
             events: {
-                'onReady': (event) => event.target.playVideo()
+                'onReady': (event) => event.target.playVideo(),
+                'onStateChange': onYouTubePlayerStateChange
             }
         });
     } else {
-        youtubePlayer.loadVideoById(videoId);
+        youtubePlayer.loadVideoById({
+            videoId: videoId,
+            startSeconds: startTime
+        });
     }
+    addToWatchHistory(currentMovie);
 }
 
 // Play Dailymotion movie
-function playDailymotionMovie(videoId) {
+function playDailymotionMovie(videoId, startTime = 0) {
     modalPoster.style.display = 'none';
     const videoContainer = document.getElementById('video-container');
     videoContainer.innerHTML = `
-        <iframe src="https://www.dailymotion.com/embed/video/${videoId}"
+        <iframe src="https://www.dailymotion.com/embed/video/${videoId}?autoplay=1&start=${Math.floor(startTime)}"
                 width="100%"
                 height="360"
                 frameborder="0"
@@ -535,6 +724,15 @@ function playDailymotionMovie(videoId) {
                 allow="autoplay">
         </iframe>
     `;
+    dailymotionPlayer = new DM.player(videoContainer, {
+        video: videoId,
+        params: {
+            autoplay: true,
+            start: Math.floor(startTime)
+        }
+    });
+    dailymotionPlayer.addEventListener('timeupdate', updateVideoProgress);
+    addToWatchHistory(currentMovie);
 }
 
 // Search Dailymotion video
@@ -587,20 +785,137 @@ function parseDuration(duration) {
 }
 
 // Play YouTube movie
-function playYouTubeMovie(videoId) {
+function playYouTubeMovie(videoId, startTime = 0) {
     modalPoster.style.display = 'none';
     if (!youtubePlayer) {
         youtubePlayer = new YT.Player('video-container', {
             height: '360',
             width: '640',
             videoId: videoId,
+            playerVars: {
+                'autoplay': 1,
+                'controls': 1,
+                'rel': 0,
+                'fs': 1,
+                'start': Math.floor(startTime)
+            },
             events: {
-                'onReady': (event) => event.target.playVideo()
+                'onReady': (event) => event.target.playVideo(),
+                'onStateChange': onYouTubePlayerStateChange
             }
         });
     } else {
-        youtubePlayer.loadVideoById(videoId);
+        youtubePlayer.loadVideoById({
+            videoId: videoId,
+            startSeconds: startTime
+        });
     }
+    addToWatchHistory(currentMovie);
+}
+
+// Update video progress
+function updateVideoProgress(event) {
+    if (!currentMovie) return;
+
+    const movieId = currentMovie.id || currentMovie.id.videoId;
+    const duration = event.target.getDuration();
+    const currentTime = event.target.getCurrentTime();
+    const progress = (currentTime / duration) * 100;
+
+    videoProgress[movieId] = {
+        progress: progress,
+        lastWatched: new Date().toISOString()
+    };
+
+    localStorage.setItem('sonixMoviesVideoProgress', JSON.stringify(videoProgress));
+
+    // Update progress bar
+    const progressBar = document.querySelector('.progress-bar');
+    if (progressBar) {
+        progressBar.style.width = `${progress}%`;
+    }
+}
+
+// YouTube player state change event handler
+function onYouTubePlayerStateChange(event) {
+    if (event.data == YT.PlayerState.PLAYING) {
+        setInterval(() => updateVideoProgress(event), 5000); // Update progress every 5 seconds
+    }
+}
+
+// Toggle Watch Later
+function toggleWatchLater(movie) {
+    const movieId = movie.id || movie.id.videoId;
+    const index = watchLaterList.findIndex(item => item.id === movieId);
+    if (index === -1) {
+        watchLaterList.push(movie);
+    } else {
+        watchLaterList.splice(index, 1);
+    }
+    localStorage.setItem('sonixMoviesWatchLater', JSON.stringify(watchLaterList));
+    updateWatchLaterButtons();
+    updateWatchLaterButton(movie);
+}
+
+// Toggle Favorite
+function toggleFavorite(movie) {
+    const movieId = movie.id || movie.id.videoId;
+    const index = favoritesList.findIndex(item => item.id === movieId);
+    if (index === -1) {
+        favoritesList.push(movie);
+    } else {
+        favoritesList.splice(index, 1);
+    }
+    localStorage.setItem('sonixMoviesFavorites', JSON.stringify(favoritesList));
+    updateFavoriteButtons();
+    updateFavoriteButton(movie);
+}
+
+// Add to Watch History
+function addToWatchHistory(movie) {
+    const movieId = movie.id || movie.id.videoId;
+    const index = watchHistoryList.findIndex(item => item.id === movieId);
+    if (index !== -1) {
+        watchHistoryList.splice(index, 1);
+    }
+    watchHistoryList.unshift(movie);
+    localStorage.setItem('sonixMoviesWatchHistory', JSON.stringify(watchHistoryList));
+}
+
+// Update Watch Later buttons
+function updateWatchLaterButtons() {
+    document.querySelectorAll('.watch-later-btn').forEach(btn => {
+        const movieCard = btn.closest('.movie-card');
+        const movieId = movieCard.dataset.movieId;
+        const isInWatchLater = watchLaterList.some(item => (item.id || item.id.videoId) === movieId);
+        btn.classList.toggle('active', isInWatchLater);
+    });
+}
+
+// Update Favorite buttons
+function updateFavoriteButtons() {
+    document.querySelectorAll('.favorite-btn').forEach(btn => {
+        const movieCard = btn.closest('.movie-card');
+        const movieId = movieCard.dataset.movieId;
+        const isInFavorites = favoritesList.some(item => (item.id || item.id.videoId) === movieId);
+        btn.classList.toggle('active', isInFavorites);
+    });
+}
+
+// Update Watch Later button on movie page
+function updateWatchLaterButton(movie) {
+    const movieId = movie.id || movie.id.videoId;
+    const isInWatchLater = watchLaterList.some(item => (item.id || item.id.videoId) === movieId);
+    watchLaterBtn.classList.toggle('active', isInWatchLater);
+    watchLaterBtn.innerHTML = isInWatchLater ? '<i class="fas fa-clock"></i> Remove from Watch Later' : '<i class="far fa-clock"></i> Add to Watch Later';
+}
+
+// Update Favorite button on movie page
+function updateFavoriteButton(movie) {
+    const movieId = movie.id || movie.id.videoId;
+    const isInFavorites = favoritesList.some(item => (item.id || item.id.videoId) === movieId);
+    favoriteBtn.classList.toggle('active', isInFavorites);
+    favoriteBtn.innerHTML = isInFavorites ? '<i class="fas fa-heart"></i> Remove from Favorites' : '<i class="far fa-heart"></i> Add to Favorites';
 }
 
 // Toggle between sections
@@ -628,13 +943,22 @@ function toggleSection() {
 // Toggle theme
 function toggleTheme() {
     document.body.classList.toggle('dark-mode');
-    const icon = themeToggle.querySelector('i');
-    if (document.body.classList.contains('dark-mode')) {
-        icon.classList.remove('fa-moon');
-        icon.classList.add('fa-sun');
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    const themeIcon = document.querySelector('#theme-toggle i');
+    const mobileThemeIcon = document.querySelector('#mobile-theme-toggle i');
+
+    if (isDarkMode) {
+        themeIcon.classList.remove('fa-moon');
+        themeIcon.classList.add('fa-sun');
+        mobileThemeIcon.classList.remove('fa-moon');
+        mobileThemeIcon.classList.add('fa-sun');
+        mobileThemeToggle.textContent = ' Light Mode';
     } else {
-        icon.classList.remove('fa-sun');
-        icon.classList.add('fa-moon');
+        themeIcon.classList.remove('fa-sun');
+        themeIcon.classList.add('fa-moon');
+        mobileThemeIcon.classList.remove('fa-sun');
+        mobileThemeIcon.classList.add('fa-moon');
+        mobileThemeToggle.textContent = ' Dark Mode';
     }
 }
 
@@ -718,6 +1042,69 @@ function updateUserGreeting() {
         greetingElement.textContent = greeting;
     }
 }
+
+// Show Watch Later list
+function showWatchLaterList() {
+    const listContainer = document.getElementById('list-container');
+    listContainer.innerHTML = '<h2>Watch Later</h2>';
+    watchLaterList.forEach(movie => {
+        const movieElement = createMovieElement(movie);
+        listContainer.appendChild(movieElement);
+    });
+    listContainer.classList.remove('hidden');
+    document.getElementById('tmdb-section').classList.add('hidden');
+    document.getElementById('nollywood-section').classList.add('hidden');
+}
+
+// Show Favorites list
+function showFavoritesList() {
+    const listContainer = document.getElementById('list-container');
+    listContainer.innerHTML = '<h2>Favorites</h2>';
+    favoritesList.forEach(movie => {
+        const movieElement = createMovieElement(movie);
+        listContainer.appendChild(movieElement);
+    });
+    listContainer.classList.remove('hidden');
+    document.getElementById('tmdb-section').classList.add('hidden');
+    document.getElementById('nollywood-section').classList.add('hidden');
+}
+
+// Show Watch History list
+function showWatchHistoryList() {
+    const listContainer = document.getElementById('list-container');
+    listContainer.innerHTML = '<h2>Watch History</h2>';
+    watchHistoryList.forEach(movie => {
+        const movieElement = createMovieElement(movie);
+        listContainer.appendChild(movieElement);
+    });
+    listContainer.classList.remove('hidden');
+    document.getElementById('tmdb-section').classList.add('hidden');
+    document.getElementById('nollywood-section').classList.add('hidden');
+}
+
+
+// Create movie element for lists
+function createMovieElement(movie) {
+    const movieElement = document.createElement('div');
+    movieElement.classList.add('list-movie');
+    const title = movie.title || movie.snippet.title;
+    const imageUrl = movie.poster_path ? IMAGE_BASE_URL + movie.poster_path : 
+                     (movie.snippet ? movie.snippet.thumbnails.medium.url : 'placeholder.jpg');
+    movieElement.innerHTML = `
+        <img src="${imageUrl}" alt="${title}">
+        <h3>${title}</h3>
+    `;
+    movieElement.addEventListener('click', () => {
+        if (movie.snippet) {
+            openNollywoodMoviePage(movie);
+        } else {
+            openMoviePage(movie);
+        }
+    });
+    return movieElement;
+}
+
+
 
 // Initialize the app
 initApp();

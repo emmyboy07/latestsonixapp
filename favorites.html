@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favorites - Sonix Movies</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <h1><i class="fas fa-film"></i> Sonix Movies</h1>
+        </div>
+        <nav class="desktop-nav">
+            <a href="index.html"><i class="fas fa-home"></i> Home</a>
+            <a href="watch-later.html"><i class="fas fa-clock"></i> Watch Later</a>
+            <a href="favorites.html" class="active"><i class="fas fa-heart"></i> Favorites</a>
+            <button id="settings-button"><i class="fas fa-cog"></i> Settings</button>
+            <button id="theme-toggle"><i class="fas fa-moon"></i></button>
+            <button id="profile-button"><i class="fas fa-user"></i></button>
+        </nav>
+        <button id="hamburger-menu" class="hamburger-menu">
+            <i class="fas fa-bars"></i>
+        </button>
+    </header>
+    <nav class="mobile-nav">
+        <a href="index.html"><i class="fas fa-home"></i> Home</a>
+        <a href="watch-later.html"><i class="fas fa-clock"></i> Watch Later</a>
+        <a href="favorites.html" class="active"><i class="fas fa-heart"></i> Favorites</a>
+        <button id="mobile-settings-button"><i class="fas fa-cog"></i> Settings</button>
+        <button id="mobile-theme-toggle"><i class="fas fa-moon"></i> Dark/Light Mode</button>
+        <button id="mobile-profile-button"><i class="fas fa-user"></i> Profile</button>
+    </nav>
+    <main>
+        <h2>Favorites</h2>
+        <div id="favorites-grid" class="movie-grid"></div>
+    </main>
+    <script src="app.js"></script>
+</body>
+</html>
+
