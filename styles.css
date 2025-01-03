@@ -22,8 +22,12 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     transition: background-color 0.3s, color 0.3s;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
+/* App-like header */
 header {
     background-color: var(--primary-color);
     color: white;
@@ -32,6 +36,10 @@ header {
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
 .logo-container {
@@ -199,10 +207,11 @@ input:checked + .slider:before {
     font-size: 1.2rem;
 }
 
-
+/* Main content styles */
 main {
     padding: 1rem;
     position: relative;
+    flex: 1;
 }
 
 .section {
@@ -213,7 +222,8 @@ main {
     display: block;
 }
 
-#movie-grid, #nollywood-grid {
+#movie-grid,
+#nollywood-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 1rem;
@@ -578,7 +588,8 @@ main {
         font-size: 2rem;
     }
 
-    #movie-grid, #nollywood-grid {
+    #movie-grid,
+    #nollywood-grid {
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     }
 
@@ -633,5 +644,155 @@ main {
         order: 3;
         width: 100%;
     }
+
+    .modal-content {
+        width: 90%;
+        margin: 20% auto;
+        padding: 10px;
+    }
+
+    .movie-content {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .modal-media {
+        width: 100%;
+        padding-top: 56.25%; /* 16:9 aspect ratio */
+    }
+
+    .modal-info {
+        width: 100%;
+    }
+
+    #movie-page {
+        padding: 1rem;
+    }
+
+    #back-button {
+        width: 100%;
+        text-align: center;
+    }
 }
 
+/* Footer Styles */
+footer {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    padding: 2rem 0;
+    margin-top: 2rem;
+    box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.footer-section {
+    flex: 1;
+    min-width: 200px;
+    margin-bottom: 1rem;
+}
+
+.footer-section h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.footer-section ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.footer-section ul li {
+    margin-bottom: 0.5rem;
+}
+
+.footer-section a {
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+.footer-section a:hover {
+    text-decoration: underline;
+}
+
+.social-icons {
+    display: flex;
+    gap: 1rem;
+}
+
+.social-icons a {
+    font-size: 1.5rem;
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--text-color-secondary);
+}
+
+@media (max-width: 768px) {
+    .footer-content {
+        flex-direction: column;
+    }
+
+    .footer-section {
+        margin-bottom: 2rem;
+    }
+}
+
+/* Additional styles for the cancel button in mobile navigation */
+.cancel-menu {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-bottom: 1rem;
+}
+
+.mobile-nav.active .cancel-menu {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .hamburger-menu {
+        display: block;
+    }
+
+    .desktop-nav {
+        display: none;
+    }
+
+    .mobile-nav {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: var(--primary-color);
+        z-index: 1000;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .mobile-nav.active {
+        display: flex;
+    }
+
+    .mobile-nav button,
+    .mobile-nav a {
+        margin: 1rem 0;
+        font-size: 1.2rem;
+    }
+}
