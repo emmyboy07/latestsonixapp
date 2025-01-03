@@ -228,7 +228,6 @@ mobileProfileBtn.addEventListener('click', () => {
     mobileNav.classList.remove('active');
 });
 
-
 // Show loading spinner
 function showLoadingSpinner() {
     loadingSpinner.classList.remove('hidden');
@@ -1082,7 +1081,6 @@ function showWatchHistoryList() {
     document.getElementById('nollywood-section').classList.add('hidden');
 }
 
-
 // Create movie element for lists
 function createMovieElement(movie) {
     const movieElement = document.createElement('div');
@@ -1104,8 +1102,5 @@ function createMovieElement(movie) {
     return movieElement;
 }
 
-
-
 // Initialize the app
 initApp();
-
