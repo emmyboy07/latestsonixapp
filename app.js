@@ -38,6 +38,11 @@ const profileModal = document.getElementById('profile-modal');
 const watchLaterListBtn = document.getElementById('watch-later-list');
 const favoritesListBtn = document.getElementById('favorites-list');
 const watchHistoryListBtn = document.getElementById('watch-history-list');
+const cancelMenuBtn = document.getElementById('cancel-menu');
+const hamburgerMenuBtn = document.getElementById('hamburger-menu');
+
+
+
 
 let currentPage = 1;
 let currentNollywoodPage = '';
@@ -178,6 +183,14 @@ if (watchHistoryListBtn) {
     watchHistoryListBtn.addEventListener('click', showWatchHistoryList);
 }
 
+
+if (cancelMenuBtn) {
+    cancelMenuBtn.addEventListener('click', () => {
+        mobileNav.classList.remove('active');
+    });
+}
+
+
 window.addEventListener('scroll', () => {
     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500 && !isLoading) {
         if (sectionToggle.checked) {
@@ -193,7 +206,7 @@ const hamburgerMenu = document.getElementById('hamburger-menu');
 const mobileNav = document.querySelector('.mobile-nav');
 
 hamburgerMenu.addEventListener('click', () => {
-    mobileNav.classList.toggle('active');
+    (document.querySelector('.mobile-nav')).classList.toggle('active');
 });
 
 // Mobile navigation buttons
@@ -205,27 +218,27 @@ const mobileProfileBtn = document.getElementById('mobile-profile-button');
 
 mobileWatchLaterBtn.addEventListener('click', () => {
     showWatchLaterList();
-    mobileNav.classList.remove('active');
+    (document.querySelector('.mobile-nav')).classList.remove('active');
 });
 
 mobileFavoritesBtn.addEventListener('click', () => {
     showFavoritesList();
-    mobileNav.classList.remove('active');
+    (document.querySelector('.mobile-nav')).classList.remove('active');
 });
 
 mobileSettingsBtn.addEventListener('click', () => {
     openSettingsModal();
-    mobileNav.classList.remove('active');
+    (document.querySelector('.mobile-nav')).classList.remove('active');
 });
 
 mobileThemeToggle.addEventListener('click', () => {
     toggleTheme();
-    mobileNav.classList.remove('active');
+    (document.querySelector('.mobile-nav')).classList.remove('active');
 });
 
 mobileProfileBtn.addEventListener('click', () => {
     openProfileModal();
-    mobileNav.classList.remove('active');
+    (document.querySelector('.mobile-nav')).classList.remove('active');
 });
 
 // Show loading spinner
@@ -1102,5 +1115,9 @@ function createMovieElement(movie) {
     return movieElement;
 }
 
-// Initialize the app
+
+
+
+
+// Initialize app
 initApp();

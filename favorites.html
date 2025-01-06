@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Favorites - Sonix Movies</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="user-list.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -12,31 +13,225 @@
         <div class="logo-container">
             <h1><i class="fas fa-film"></i> Sonix Movies</h1>
         </div>
+        <div class="header-controls">
+            <label class="switch">
+                <input type="checkbox" id="section-toggle">
+                <span class="slider round"></span>
+            </label>
+            <button id="hamburger-menu" class="hamburger-menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
         <nav class="desktop-nav">
             <a href="index.html"><i class="fas fa-home"></i> Home</a>
-            <a href="watch-later.html"><i class="fas fa-clock"></i> Watch Later</a>
-            <a href="favorites.html" class="active"><i class="fas fa-heart"></i> Favorites</a>
+            <a href="watch-later.html" id="watch-later-list"><i class="fas fa-clock"></i> Watch Later</a>
+            <a href="favorites.html" id="favorites-list" class="active"><i class="fas fa-heart"></i> Favorites</a>
             <button id="settings-button"><i class="fas fa-cog"></i> Settings</button>
             <button id="theme-toggle"><i class="fas fa-moon"></i></button>
             <button id="profile-button"><i class="fas fa-user"></i></button>
         </nav>
-        <button id="hamburger-menu" class="hamburger-menu">
-            <i class="fas fa-bars"></i>
-        </button>
     </header>
     <nav class="mobile-nav">
         <a href="index.html"><i class="fas fa-home"></i> Home</a>
-        <a href="watch-later.html"><i class="fas fa-clock"></i> Watch Later</a>
-        <a href="favorites.html" class="active"><i class="fas fa-heart"></i> Favorites</a>
+        <a href="watch-later.html" id="mobile-watch-later-list"><i class="fas fa-clock"></i> Watch Later</a>
+        <a href="favorites.html" id="mobile-favorites-list" class="active"><i class="fas fa-heart"></i> Favorites</a>
         <button id="mobile-settings-button"><i class="fas fa-cog"></i> Settings</button>
         <button id="mobile-theme-toggle"><i class="fas fa-moon"></i> Dark/Light Mode</button>
         <button id="mobile-profile-button"><i class="fas fa-user"></i> Profile</button>
     </nav>
     <main>
-        <h2>Favorites</h2>
+        <h2>Your Favorites</h2>
         <div id="favorites-grid" class="movie-grid"></div>
     </main>
+    <div id="movie-page" class="hidden">
+        <button id="back-button"><i class="fas fa-arrow-left"></i> Back</button>
+        <div class="movie-content">
+            <div class="modal-media">
+                <img id="modal-poster" src="/placeholder.svg" alt="Movie Poster">
+                <div id="video-container"></div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar"></div>
+                </div>
+            </div>
+            <div class="modal-info">
+                <h2 id="modal-title"></h2>
+                <p id="modal-overview"></p>
+                <div class="button-container">
+                    <button id="watch-trailer"><i class="fas fa-play"></i> Watch Trailer</button>
+                    <button id="watch-movie"><i class="fas fa-film"></i> Watch Movie</button>
+                    <button id="watch-later"><i class="fas fa-clock"></i> Watch Later</button>
+                    <button id="favorite"><i class="fas fa-heart"></i> Favorite</button>
+                </div>
+                <div id="movie-details"></div>
+            </div>
+        </div>
+    </div>
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Settings</h2>
+            <div class="settings-options">
+                <div class="setting">
+                    <label for="default-section">Default Section:</label>
+                    <select id="default-section">
+                        <option value="international">International Movies</option>
+                        <option value="nollywood">Nollywood Movies</option>
+                    </select>
+                </div>
+                <div class="setting">
+                    <label for="movies-per-page">Movies per page:</label>
+                    <input type="number" id="movies-per-page" min="10" max="50" step="5">
+                </div>
+                <div class="setting">
+                    <label for="auto-play-trailers">Auto-play trailers:</label>
+                    <input type="checkbox" id="auto-play-trailers">
+                </div>
+                <div class="setting">
+                    <label>Genres:</label>
+                    <div id="genre-checkboxes">
+                        <!-- Genre checkboxes will be dynamically added here -->
+                    </div>
+                </div>
+                <div class="setting">
+                    <label for="dark-mode">Dark Mode:</label>
+                    <input type="checkbox" id="dark-mode">
+                </div>
+            </div>
+            <button id="save-settings">Save Settings</button>
+        </div>
+    </div>
+    <div id="profile-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>User Profile</h2>
+            <form id="profile-form">
+                <div class="form-group">
+                    <label for="profile-name">Name:</label>
+                    <input type="text" id="profile-name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="profile-email">Email:</label>
+                    <input type="email" id="profile-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="profile-image">Profile Image:</label>
+                    <input type="file" id="profile-image" name="image" accept="image/*">
+                </div>
+                <button type="submit">Save Profile</button>
+            </form>
+            <div id="profile-display"></div>
+        </div>
+    </div>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="https://api.dmcdn.net/all.js"></script>
     <script src="app.js"></script>
-</body>
-</html>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const favoritesGrid = document.getElementById('favorites-grid');
+            const moviePage = document.getElementById('movie-page');
+            const backButton = document.getElementById('back-button');
+            const modalTitle = document.getElementById('modal-title');
+            const modalOverview = document.getElementById('modal-overview');
+            const modalPoster = document.getElementById('modal-poster');
+            const watchTrailerBtn = document.getElementById('watch-trailer');
+            const watchMovieBtn = document.getElementById('watch-movie');
+            const watchLaterBtn = document.getElementById('watch-later');
+            const favoriteBtn = document.getElementById('favorite');
 
+            function displayFavoriteMovies() {
+                const favoritesList = JSON.parse(localStorage.getItem('sonixMoviesFavorites')) || [];
+                favoritesGrid.innerHTML = '';
+
+                if (favoritesList.length === 0) {
+                    favoritesGrid.innerHTML = '<p>Your Favorites list is empty.</p>';
+                    return;
+                }
+
+                favoritesList.forEach(movie => {
+                    const movieCard = document.createElement('div');
+                    movieCard.classList.add('movie-card');
+                    const title = movie.title || movie.snippet.title;
+                    const imageUrl = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 
+                                     (movie.snippet ? movie.snippet.thumbnails.medium.url : 'placeholder.jpg');
+                    movieCard.innerHTML = `
+                        <img src="${imageUrl}" alt="${title}">
+                        <h3>${title}</h3>
+                    `;
+                    movieCard.addEventListener('click', () => openMovieDetails(movie));
+                    favoritesGrid.appendChild(movieCard);
+                });
+            }
+
+            function openMovieDetails(movie) {
+                modalTitle.textContent = movie.title || movie.snippet.title;
+                modalOverview.textContent = movie.overview || movie.snippet.description;
+                modalPoster.src = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 
+                                  (movie.snippet ? movie.snippet.thumbnails.high.url : 'placeholder.jpg');
+                moviePage.classList.remove('hidden');
+
+                watchTrailerBtn.onclick = () => alert('Trailer functionality to be implemented');
+                watchMovieBtn.onclick = () => alert('Movie playback functionality to be implemented');
+                watchLaterBtn.onclick = () => toggleWatchLater(movie);
+                favoriteBtn.onclick = () => removeFromFavorites(movie);
+
+                updateWatchLaterButton(movie);
+                updateFavoriteButton(movie);
+            }
+
+            function removeFromFavorites(movie) {
+                let favoritesList = JSON.parse(localStorage.getItem('sonixMoviesFavorites')) || [];
+                const movieId = movie.id || (movie.id && movie.id.videoId);
+                favoritesList = favoritesList.filter(item => {
+                    const itemId = item.id || (item.id && item.id.videoId);
+                    return itemId !== movieId;
+                });
+                localStorage.setItem('sonixMoviesFavorites', JSON.stringify(favoritesList));
+                displayFavoriteMovies();
+                closeMovieDetails();
+            }
+
+            function toggleWatchLater(movie) {
+                let watchLaterList = JSON.parse(localStorage.getItem('sonixMoviesWatchLater')) || [];
+                const movieId = movie.id || (movie.id && movie.id.videoId);
+                const index = watchLaterList.findIndex(item => {
+                    const itemId = item.id || (item.id && item.id.videoId);
+                    return itemId === movieId;
+                });
+                if (index === -1) {
+                    watchLaterList.push(movie);
+                } else {
+                    watchLaterList.splice(index, 1);
+                }
+                localStorage.setItem('sonixMoviesWatchLater', JSON.stringify(watchLaterList));
+                updateWatchLaterButton(movie);
+            }
+
+            function updateWatchLaterButton(movie) {
+                const watchLaterList = JSON.parse(localStorage.getItem('sonixMoviesWatchLater')) || [];
+                const movieId = movie.id || (movie.id && movie.id.videoId);
+                const isWatchLater = watchLaterList.some(item => {
+                    const itemId = item.id || (item.id && item.id.videoId);
+                    return itemId === movieId;
+                });
+                watchLaterBtn.textContent = isWatchLater ? 'Remove from Watch Later' : 'Add to Watch Later';
+                watchLaterBtn.classList.toggle('active', isWatchLater);
+            }
+
+            function updateFavoriteButton(movie) {
+                favoriteBtn.textContent = 'Remove from Favorites';
+                favoriteBtn.classList.add('active');
+            }
+
+            function closeMovieDetails() {
+                moviePage.classList.add('hidden');
+            }
+
+            backButton.addEventListener('click', closeMovieDetails);
+
+            // Initialize the page
+            displayFavoriteMovies();
+        });
+    </script>
+</body>
+
+</html>
