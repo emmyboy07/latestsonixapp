@@ -183,7 +183,9 @@
       height: 100%;
       background-color: var(--header-bg);
       z-index: 1000;
-      padding: 2rem;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
   
     .mobile-nav.active {
@@ -191,16 +193,6 @@
       flex-direction: column;
     }
   
-    .mobile-nav a, .mobile-nav button {
-      color: #fff;
-      text-decoration: none;
-      margin-bottom: 1rem;
-      font-size: 1.2rem;
-      background: none;
-      border: none;
-      cursor: pointer;
-      text-align: center;
-    }
   
     .movie-grid {
       grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
