@@ -180,11 +180,8 @@
 
             function removeFromFavorites(movie) {
                 let favoritesList = JSON.parse(localStorage.getItem('sonixMoviesFavorites')) || [];
-                const movieId = movie.id || (movie.id && movie.id.videoId);
-                favoritesList = favoritesList.filter(item => {
-                    const itemId = item.id || (item.id && item.id.videoId);
-                    return itemId !== movieId;
-                });
+                const movieId = movie.id || movie.id.videoId;
+                favoritesList = favoritesList.filter(item => (item.id || item.id.videoId) !== movieId);
                 localStorage.setItem('sonixMoviesFavorites', JSON.stringify(favoritesList));
                 displayFavoriteMovies();
                 closeMovieDetails();
@@ -192,11 +189,8 @@
 
             function toggleWatchLater(movie) {
                 let watchLaterList = JSON.parse(localStorage.getItem('sonixMoviesWatchLater')) || [];
-                const movieId = movie.id || (movie.id && movie.id.videoId);
-                const index = watchLaterList.findIndex(item => {
-                    const itemId = item.id || (item.id && item.id.videoId);
-                    return itemId === movieId;
-                });
+                const movieId = movie.id || movie.id.videoId;
+                const index = watchLaterList.findIndex(item => (item.id || item.id.videoId) === movieId);
                 if (index === -1) {
                     watchLaterList.push(movie);
                 } else {
@@ -208,11 +202,8 @@
 
             function updateWatchLaterButton(movie) {
                 const watchLaterList = JSON.parse(localStorage.getItem('sonixMoviesWatchLater')) || [];
-                const movieId = movie.id || (movie.id && movie.id.videoId);
-                const isWatchLater = watchLaterList.some(item => {
-                    const itemId = item.id || (item.id && item.id.videoId);
-                    return itemId === movieId;
-                });
+                const movieId = movie.id || movie.id.videoId;
+                const isWatchLater = watchLaterList.some(item => (item.id || item.id.videoId) === movieId);
                 watchLaterBtn.textContent = isWatchLater ? 'Remove from Watch Later' : 'Add to Watch Later';
                 watchLaterBtn.classList.toggle('active', isWatchLater);
             }
@@ -232,6 +223,6 @@
             displayFavoriteMovies();
         });
     </script>
+    
 </body>
-
 </html>

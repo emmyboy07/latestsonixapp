@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help Center - Sonix Movies</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="support-pages.css">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <h1><a href="index.html"><i class="fas fa-film"></i> Sonix Movies</a></h1>
+        </div>
+        <div class="header-controls">
+            <button id="hamburger-menu" class="hamburger-menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <nav class="desktop-nav">
+            <a href="index.html"><i class="fas fa-home"></i> Home</a>
+            <a href="watch-later.html"><i class="fas fa-clock"></i> Watch Later</a>
+            <a href="favorites.html"><i class="fas fa-heart"></i> Favorites</a>
+            <a href="our-story.html"><i class="fas fa-book-open"></i> Our Story</a>
+            <a href="about-developer.html"><i class="fas fa-code"></i> About Developer</a>
+            <button id="settings-button"><i class="fas fa-cog"></i> Settings</button>
+            <button id="theme-toggle"><i class="fas fa-moon"></i></button>
+            <button id="profile-button"><i class="fas fa-user"></i></button>
+        </nav>
+    </header>
+
+    <nav class="mobile-nav" role="navigation" aria-label="Mobile navigation">
+        <button id="cancel-menu" class="cancel-menu" aria-label="Close menu">
+            <i class="fas fa-times" aria-hidden="true"></i> Cancel
+        </button>
+        <a href="index.html"><i class="fas fa-home"></i> Home</a>
+        <a href="contact-us.html"><i class="fas fa-phone"></i> Contact Us</a>
+        <a href="faqs.html"><i class="fas fa-question-circle"></i> FAQs</a>
+        <a href="our-story.html"><i class="fas fa-book-open"></i> Our Story</a>
+        <a href="about-developer.html"><i class="fas fa-code"></i> About Developer</a>
+        <a href="help-center.html" class="active"><i class="fas fa-help"></i> Help Center</a>
+        
+    </nav>
+
+    <main class="support-content">
+        <h2>Help Center</h2>
+        <div class="help-categories">
+            <div class="help-category">
+                <h3><i class="fas fa-play-circle"></i> Getting Started</h3>
+                <ul>
+                    <li><a href="#create-account">How to create an account</a></li>
+                    <li><a href="#browse-movies">Browsing movies</a></li>
+                    <li><a href="#watch-movie">How to watch a movie</a></li>
+                </ul>
+            </div>
+            <div class="help-category">
+                <h3><i class="fas fa-cog"></i> Account Settings</h3>
+                <ul>
+                    <li><a href="#change-password">Changing your password</a></li>
+                    <li><a href="#update-profile">Updating your profile</a></li>
+                    <li><a href="#manage-preferences">Managing preferences</a></li>
+                </ul>
+            </div>
+            <div class="help-category">
+                <h3><i class="fas fa-film"></i> Movie Features</h3>
+                <ul>
+                    <li><a href="#add-watchlist">Adding to Watch Later list</a></li>
+                    <li><a href="#add-favorites">Adding to Favorites</a></li>
+                    <li><a href="#rate-review">Rating and reviewing movies</a></li>
+                </ul>
+            </div>
+            <div class="help-category">
+                <h3><i class="fas fa-question-circle"></i> Troubleshooting</h3>
+                <ul>
+                    <li><a href="#playback-issues">Playback issues</a></li>
+                    <li><a href="#login-problems">Login problems</a></li>
+                    <li><a href="#app-not-loading">App not loading</a></li>
+                </ul>
+            </div>
+        </div>
+        <section id="create-account" class="help-section">
+            <h3>How to create an account</h3>
+            <p>To create a Sonix Movies account:</p>
+            <ol>
+                <li>Click on the "Sign Up" button in the top right corner of the homepage.</li>
+                <li>Enter your email address and choose a strong password.</li>
+                <li>Fill in your profile information (name, date of birth, etc.).</li>
+                <li>Agree to the terms of service and privacy policy.</li>
+                <li>Click "Create Account" to finish the process.</li>
+            </ol>
+        </section>
+        <!-- Add more help sections here -->
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Us</h3>
+                <ul>
+                    <li><a href="our-story.html">Our Story</a></li>
+                    <li><a href="about-developer.html">About Developer</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="help-center.html" id="help-center">Help Center</a></li>
+                    <li><a href="contact-us.html" id="contact-us">Contact Us</a></li>
+                    <li><a href="faqs.html" id="faqs">FAQs</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-icons">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <span id="current-year">2025</span> Sonix Movies. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

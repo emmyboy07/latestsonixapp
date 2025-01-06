@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQs - Sonix Movies</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="support-pages.css">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <h1><a href="index.html"><i class="fas fa-film"></i> Sonix Movies</a></h1>
+        </div>
+        <div class="header-controls">
+            <button id="hamburger-menu" class="hamburger-menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <nav class="desktop-nav">
+            <a href="index.html"><i class="fas fa-home"></i> Home</a>
+            <a href="watch-later.html"><i class="fas fa-clock"></i> Watch Later</a>
+            <a href="favorites.html"><i class="fas fa-heart"></i> Favorites</a>
+            <a href="our-story.html"><i class="fas fa-book-open"></i> Our Story</a>
+            <button id="settings-button"><i class="fas fa-cog"></i> Settings</button>
+            <button id="theme-toggle"><i class="fas fa-moon"></i></button>
+            <button id="profile-button"><i class="fas fa-user"></i></button>
+        </nav>
+    </header>
+
+    <nav class="mobile-nav" role="navigation" aria-label="Mobile navigation">
+        <button id="cancel-menu" class="cancel-menu" aria-label="Close menu">
+            <i class="fas fa-times" aria-hidden="true"></i> Cancel
+        </button>
+        <a href="index.html"><i class="fas fa-home"></i> Home</a>
+        <a href="contact-us.html"><i class="fas fa-phone"></i> Contact Us</a>
+        <a href="faqs.html" class="active"><i class="fas fa-question-circle"></i> FAQs</a>
+        <a href="our-story.html"><i class="fas fa-book-open"></i> Our Story</a>
+        <a href="about-developer.html"><i class="fas fa-code"></i> About Developer</a>
+        <a href="help-center.html" ><i class="fas fa-help"></i> Help Center</a>
+        
+    </nav>
+
+    <main class="support-content">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-list">
+            <div class="faq-item">
+                <h3>What is Sonix Movies?</h3>
+                <p>Sonix Movies is a streaming platform that offers a wide variety of movies, including international and Nollywood films. Our service allows you to watch movies online, create watchlists, and discover new favorites.</p>
+            </div>
+            <div class="faq-item">
+                <h3>How much does Sonix Movies cost?</h3>
+                <p>Sonix Movies is absolutely free.</p>
+            </div>
+            <div class="faq-item">
+                <h3>Is Sonix Movies available in my country?</h3>
+                <p>Sonix Movies is currently available in all countries. </p>
+            </div>
+            <div class="faq-item">
+                <h3>How often is new content added?</h3>
+                <p>We add new movies and update our library regularly. Check our "New Arrivals" section to see the latest additions to our catalog.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Us</h3>
+                <ul>
+                    <li><a href="our-story.html">Our Story</a></li>
+                    <li><a href="about-developer.html">About Developer</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="help-center.html" id="help-center">Help Center</a></li>
+                    <li><a href="contact-us.html" id="contact-us">Contact Us</a></li>
+                    <li><a href="faqs.html" id="faqs">FAQs</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-icons">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <span id="current-year">2025</span> Sonix Movies. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+    <script src="common.js"></script>
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

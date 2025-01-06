@@ -670,8 +670,8 @@ main {
     }
 
     #back-button {
-        width: 100%;
-        text-align: center;
+        width: 30%;
+        text-align: left;
     }
 }
 
@@ -796,3 +796,4 @@ footer {
         font-size: 1.2rem;
     }
 }
+
