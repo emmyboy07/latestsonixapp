@@ -1,3 +1,9 @@
+html, body {
+    touch-action: pan-y pan-x; /* Allows scrolling but prevents pinch zoom */
+}
+
+
+
 :root {
     --primary-color: #e50914;
     --text-color: #333;
