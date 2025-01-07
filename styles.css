@@ -190,27 +190,55 @@ input:checked + .slider:before {
     cursor: pointer;
 }
 
+/* Mobile navigation: Adjust width and position */
 .mobile-nav {
     display: none;
     position: fixed;
     top: 0;
-    left: 0;
-    width: 100%;
+    right: 0; /* Start from the right side */
+    width: 50%; /* Occupy only half the screen */
     height: 100%;
     background-color: var(--primary-color);
     z-index: 1000;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3); /* Add shadow for better visibility */
+    transition: transform 0.3s ease-in-out; /* Smooth slide-in effect */
+    transform: translateX(100%); /* Initially hidden off-screen */
 }
 
 .mobile-nav.active {
     display: flex;
+    transform: translateX(0); /* Slide into view */
 }
 
-.mobile-nav button {
+/* Adjust cancel menu button */
+.cancel-menu {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    color: white;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+/* Mobile navigation links styling */
+.mobile-nav button,
+.mobile-nav a {
     margin: 1rem 0;
     font-size: 1.2rem;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    transition: color 0.3s ease;
+}
+
+.mobile-nav button:hover,
+.mobile-nav a:hover {
+    color: var(--text-color);
 }
 
 /* Main content styles */
@@ -290,7 +318,7 @@ main {
     background-color: var(--bg-color);
     overflow-y: auto;
     z-index: 1000;
-    padding: 2rem;
+    padding: 5rem;
 }
 
 #movie-page.hidden {

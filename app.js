@@ -984,6 +984,59 @@ function toggleTheme() {
     }
 }
 
+function openMovieDetails(movie) {
+    modalTitle.textContent = movie.title || movie.snippet.title;
+    modalOverview.textContent = movie.overview || movie.snippet.description;
+    modalPoster.src = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 
+                      (movie.snippet ? movie.snippet.thumbnails.high.url : 'placeholder.jpg');
+    moviePage.classList.remove('hidden');
+
+    watchTrailerBtn.onclick = () => playTrailer(movie);
+    watchMovieBtn.onclick = () => playMovie(movie);
+    watchLaterBtn.onclick = () => toggleWatchLater(movie);
+    favoriteBtn.onclick = () => toggleFavorite(movie);
+
+    updateWatchLaterButton(movie);
+    updateFavoriteButton(movie);
+}
+
+async function playTrailer(movie) {
+    try {
+        const trailerUrl = await fetchYouTubeTrailer(movie.title || movie.snippet.title);
+        playYouTubeTrailer(trailerUrl);
+    } catch (error) {
+        console.error('Error playing trailer:', error);
+        alert('Failed to play trailer. Please try again later.');
+    }
+}
+
+async function playMovie(movie) {
+    try {
+        if (movie.snippet) {
+            // For Nollywood movies (YouTube videos)
+            playYouTubeTrailer(`https://www.youtube.com/watch?v=${movie.id.videoId}`);
+        } else {
+            // For international movies
+            const movieDetails = await fetchMovieDetails(movie.id);
+            const dailymotionVideoId = await searchDailymotionVideo(movie.title, movieDetails.runtime);
+            if (dailymotionVideoId) {
+                playDailymotionMovie(dailymotionVideoId);
+            } else {
+                const youtubeFullMovieId = await searchYouTubeFullMovie(movie.title, movieDetails.runtime);
+                if (youtubeFullMovieId) {
+                    playYouTubeMovie(youtubeFullMovieId);
+                } else {
+                    alert('Full movie is not available at the moment.');
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error playing movie:', error);
+        alert('Failed to play movie. Please try again later.');
+    }
+}
+
+
 // Open settings modal
 function openSettingsModal() {
     settingsModal.style.display = 'block';
@@ -1013,6 +1066,7 @@ function saveSettings() {
         fetchPopularMovies();
     }
 }
+
 
 // Save profile
 function saveProfile(event) {
@@ -1124,6 +1178,44 @@ function createMovieElement(movie) {
     });
     return movieElement;
 }
+
+// Form submission
+const form = document.getElementById('contact-form');
+if (form) {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const submitBtn = form.querySelector('.submit-btn');
+        const originalBtnText = submitBtn.textContent;
+        submitBtn.textContent = 'Sending...';
+        submitBtn.disabled = true;
+
+        fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form),
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.ok) {
+                form.reset();
+                alert('Thank you for your message! I will get back to you soon.');
+            } else {
+                throw new Error('Form submission failed');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Oops! There was a problem submitting your form. Please try again later.');
+        })
+        .finally(() => {
+            submitBtn.textContent = originalBtnText;
+            submitBtn.disabled = false;
+        });
+    });
+}
+
 
 
 
