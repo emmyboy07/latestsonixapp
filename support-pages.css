@@ -107,7 +107,7 @@
 }
 
 .submit-btn:hover {
-    background-color: var(--primary-color-hover);
+    background-color: red
 }
 
 .contact-info {
