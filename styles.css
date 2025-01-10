@@ -343,7 +343,7 @@ main {
 
 .modal-media {
     position: relative;
-    width: 100%;
+    width: 90%;
     padding-top: 56.25%; /* 16:9 aspect ratio */
 }
 
@@ -353,7 +353,7 @@ main {
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 80%;
     object-fit: cover;
 }
 
@@ -654,8 +654,9 @@ main {
     }
 
     .button-container button {
-        width: 100%;
-        margin-right: 0;
+        width: 30%;
+       align-items: center;
+       padding: 0.2rem 0.2rem;
     }
 
     .movie-card {
@@ -707,6 +708,8 @@ main {
         width: 30%;
         text-align: left;
     }
+    
+
 }
 
 /* Footer Styles */
