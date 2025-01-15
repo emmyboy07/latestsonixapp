@@ -1,0 +1,104 @@
+/* General page styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #111;
+    color: #fff;
+}
+
+
+/* Centered video feed */
+#movie-feed {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+}
+
+/* Each movie trailer will occupy the full screen */
+.trailer-item {
+    position: relative;
+    width: 100%;
+    height: 100vh; /* Full screen height */
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Title and description for the movie */
+.trailer-item h2 {
+    position: absolute;
+    top: 20px;
+    left: 15px;
+    font-size: 36px;
+    color: white;
+    font-weight: bold;
+    z-index: 10;
+    margin: 0;
+}
+
+.trailer-item p {
+    position: absolute;
+    bottom: 30px;
+    left: 15px;
+    font-size: 18px;
+    color: #bbb;
+    z-index: 10;
+    margin: 0;
+    width: 80%;
+}
+
+/* YouTube iframe for the trailers */
+iframe {
+    width: 100%;
+    height: 100%; /* Take full height of the container */
+    border: none;
+}
+
+/* Loading message */
+#loading-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+    color: white;
+    font-size: 18px;
+    display: none; /* Initially hidden */
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .trailer-item h2 {
+        font-size: 28px; /* Smaller title font size on mobile */
+    }
+
+    .trailer-item p {
+        font-size: 16px; /* Smaller description font size on mobile */
+        width: 90%; /* Adjust the width of the description text */
+    }
+}
+
+/* Very small screen or portrait mode */
+@media (max-width: 480px) {
+    .trailer-item h2 {
+        font-size: 24px; /* Even smaller title font size */
+    }
+
+    .trailer-item p {
+        font-size: 14px; /* Even smaller description font size */
+        width: 95%; /* Adjust the description text width */
+    }
+}
+
+/* Fullscreen Mode for Mobile */
+@media (max-width: 480px) and (orientation: portrait) {
+    iframe {
+        height: 100vh; /* Ensure iframe takes full height in portrait mode */
+    }
+}

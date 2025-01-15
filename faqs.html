@@ -101,5 +101,64 @@
     <script>
         document.getElementById('current-year').textContent = new Date().getFullYear();
     </script>
+    <script>
+        // Save settings to localStorage
+        function saveSettings() {
+            const darkMode = document.getElementById('dark-mode').checked;
+            const defaultSection = document.getElementById('default-section').value;
+            const moviesPerPage = document.getElementById('movies-per-page').value;
+    
+            const settings = {
+                darkMode,
+                defaultSection,
+                moviesPerPage,
+            };
+    
+            localStorage.setItem('userSettings', JSON.stringify(settings));
+            applySettings();
+        }
+    
+        // Apply settings from localStorage
+        function applySettings() {
+            const settings = JSON.parse(localStorage.getItem('userSettings')) || {
+                darkMode: false,
+                defaultSection: 'international',
+                moviesPerPage: 20,
+            };
+    
+            // Apply Dark Mode
+            if (settings.darkMode) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+    
+            // Set default section
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => section.classList.remove('active'));
+            document.getElementById(`${settings.defaultSection}-section`).classList.add('active');
+    
+            // Update settings modal fields
+            document.getElementById('dark-mode').checked = settings.darkMode;
+            document.getElementById('default-section').value = settings.defaultSection;
+            document.getElementById('movies-per-page').value = settings.moviesPerPage;
+        }
+    
+        // Initialize settings on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            applySettings();
+    
+            document.getElementById('save-settings').addEventListener('click', saveSettings);
+        });
+    
+        // Toggle Dark Mode instantly
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const currentSettings = JSON.parse(localStorage.getItem('userSettings')) || {};
+            currentSettings.darkMode = document.body.classList.contains('dark-mode');
+            localStorage.setItem('userSettings', JSON.stringify(currentSettings));
+        });
+    </script>
+    
 </body>
 </html>

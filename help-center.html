@@ -49,7 +49,6 @@
             <div class="help-category">
                 <h3><i class="fas fa-play-circle"></i> Getting Started</h3>
                 <ul>
-                    <li><a href="#create-account">How to create an account</a></li>
                     <li><a href="#browse-movies">Browsing movies</a></li>
                     <li><a href="#watch-movie">How to watch a movie</a></li>
                 </ul>
@@ -57,7 +56,6 @@
             <div class="help-category">
                 <h3><i class="fas fa-cog"></i> Account Settings</h3>
                 <ul>
-                    <li><a href="#change-password">Changing your password</a></li>
                     <li><a href="#update-profile">Updating your profile</a></li>
                     <li><a href="#manage-preferences">Managing preferences</a></li>
                 </ul>
@@ -74,7 +72,6 @@
                 <h3><i class="fas fa-question-circle"></i> Troubleshooting</h3>
                 <ul>
                     <li><a href="#playback-issues">Playback issues</a></li>
-                    <li><a href="#login-problems">Login problems</a></li>
                     <li><a href="#app-not-loading">App not loading</a></li>
                 </ul>
             </div>
@@ -126,8 +123,68 @@
     </footer>
 
     <script src="app.js"></script>
+    <script src="common.js"></script>  
     <script>
         document.getElementById('current-year').textContent = new Date().getFullYear();
     </script>
+    <script>
+        // Save settings to localStorage
+        function saveSettings() {
+            const darkMode = document.getElementById('dark-mode').checked;
+            const defaultSection = document.getElementById('default-section').value;
+            const moviesPerPage = document.getElementById('movies-per-page').value;
+    
+            const settings = {
+                darkMode,
+                defaultSection,
+                moviesPerPage,
+            };
+    
+            localStorage.setItem('userSettings', JSON.stringify(settings));
+            applySettings();
+        }
+    
+        // Apply settings from localStorage
+        function applySettings() {
+            const settings = JSON.parse(localStorage.getItem('userSettings')) || {
+                darkMode: false,
+                defaultSection: 'international',
+                moviesPerPage: 20,
+            };
+    
+            // Apply Dark Mode
+            if (settings.darkMode) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+    
+            // Set default section
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => section.classList.remove('active'));
+            document.getElementById(`${settings.defaultSection}-section`).classList.add('active');
+    
+            // Update settings modal fields
+            document.getElementById('dark-mode').checked = settings.darkMode;
+            document.getElementById('default-section').value = settings.defaultSection;
+            document.getElementById('movies-per-page').value = settings.moviesPerPage;
+        }
+    
+        // Initialize settings on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            applySettings();
+    
+            document.getElementById('save-settings').addEventListener('click', saveSettings);
+        });
+    
+        // Toggle Dark Mode instantly
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const currentSettings = JSON.parse(localStorage.getItem('userSettings')) || {};
+            currentSettings.darkMode = document.body.classList.contains('dark-mode');
+            localStorage.setItem('userSettings', JSON.stringify(currentSettings));
+        });
+    </script>
+    
 </body>
 </html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sonix Movies - Downloads</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="downloads.html">Downloads</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section id="downloads-section">
+      <h1>Your Downloaded Movies</h1>
+      <div id="downloads-list">
+        <p>Loading your downloaded movies...</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Fetch downloaded movies from the server
+    async function fetchDownloads() {
+      try {
+        const response = await fetch('http://localhost:3000/api/downloads');
+        if (!response.ok) {
+          throw new Error('Failed to fetch downloads.');
+        }
+        const downloads = await response.json();
+        displayDownloads(downloads);
+      } catch (error) {
+        console.error('Error fetching downloads:', error);
+        document.getElementById('downloads-list').innerHTML = '<p>Error loading downloads. Please try again later.</p>';
+      }
+    }
+
+    // Display the list of downloaded movies
+    function displayDownloads(downloads) {
+      const downloadsList = document.getElementById('downloads-list');
+      downloadsList.innerHTML = ''; // Clear loading message
+
+      if (downloads.length === 0) {
+        downloadsList.innerHTML = '<p>No movies downloaded yet.</p>';
+        return;
+      }
+
+      downloads.forEach(movie => {
+        const movieItem = document.createElement('div');
+        movieItem.classList.add('movie-item');
+
+        movieItem.innerHTML = `
+          <h3>${movie.title}</h3>
+          <video controls>
+            <source src="${movie.filePath}" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        `;
+
+        downloadsList.appendChild(movieItem);
+      });
+    }
+
+    // Fetch downloads on page load
+    fetchDownloads();
+  </script>
+</body>
+</html>

@@ -137,16 +137,32 @@
             const watchMovieBtn = document.getElementById('watch-movie');
             const watchLaterBtn = document.getElementById('watch-later');
             const favoriteBtn = document.getElementById('favorite');
-
+        
+            // Load user settings
+            const userSettings = JSON.parse(localStorage.getItem('sonixMoviesSettings')) || {
+                defaultSection: 'international',
+                moviesPerPage: 20,
+                autoPlayTrailers: false,
+                selectedGenres: [],
+                darkMode: false
+            };
+        
+            function applyUserSettings() {
+                if (userSettings.darkMode) {
+                    document.body.classList.add('dark-mode');
+                }
+                // Apply other settings as needed
+            }
+        
             function displayFavoriteMovies() {
                 const favoritesList = JSON.parse(localStorage.getItem('sonixMoviesFavorites')) || [];
                 favoritesGrid.innerHTML = '';
-
+        
                 if (favoritesList.length === 0) {
                     favoritesGrid.innerHTML = '<p>Your Favorites list is empty.</p>';
                     return;
                 }
-
+        
                 favoritesList.forEach(movie => {
                     const movieCard = document.createElement('div');
                     movieCard.classList.add('movie-card');
@@ -161,23 +177,23 @@
                     favoritesGrid.appendChild(movieCard);
                 });
             }
-
+        
             function openMovieDetails(movie) {
                 modalTitle.textContent = movie.title || movie.snippet.title;
                 modalOverview.textContent = movie.overview || movie.snippet.description;
                 modalPoster.src = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 
                                   (movie.snippet ? movie.snippet.thumbnails.high.url : 'placeholder.jpg');
                 moviePage.classList.remove('hidden');
-
-                watchTrailerBtn.onclick = () => alert('Trailer functionality to be implemented');
-                watchMovieBtn.onclick = () => alert('Movie playback functionality to be implemented');
+        
+                watchTrailerBtn.onclick = () => playTrailer(movie);
+                watchMovieBtn.onclick = () => playMovie(movie);
                 watchLaterBtn.onclick = () => toggleWatchLater(movie);
                 favoriteBtn.onclick = () => removeFromFavorites(movie);
-
+        
                 updateWatchLaterButton(movie);
                 updateFavoriteButton(movie);
             }
-
+        
             function removeFromFavorites(movie) {
                 let favoritesList = JSON.parse(localStorage.getItem('sonixMoviesFavorites')) || [];
                 const movieId = movie.id || movie.id.videoId;
@@ -186,7 +202,7 @@
                 displayFavoriteMovies();
                 closeMovieDetails();
             }
-
+        
             function toggleWatchLater(movie) {
                 let watchLaterList = JSON.parse(localStorage.getItem('sonixMoviesWatchLater')) || [];
                 const movieId = movie.id || movie.id.videoId;
@@ -199,7 +215,7 @@
                 localStorage.setItem('sonixMoviesWatchLater', JSON.stringify(watchLaterList));
                 updateWatchLaterButton(movie);
             }
-
+        
             function updateWatchLaterButton(movie) {
                 const watchLaterList = JSON.parse(localStorage.getItem('sonixMoviesWatchLater')) || [];
                 const movieId = movie.id || movie.id.videoId;
@@ -207,22 +223,60 @@
                 watchLaterBtn.textContent = isWatchLater ? 'Remove from Watch Later' : 'Add to Watch Later';
                 watchLaterBtn.classList.toggle('active', isWatchLater);
             }
-
+        
             function updateFavoriteButton(movie) {
                 favoriteBtn.textContent = 'Remove from Favorites';
                 favoriteBtn.classList.add('active');
             }
-
+        
             function closeMovieDetails() {
                 moviePage.classList.add('hidden');
             }
-
+        
+            async function playTrailer(movie) {
+                try {
+                    const trailerUrl = await fetchYouTubeTrailer(movie.title || movie.snippet.title);
+                    playYouTubeTrailer(trailerUrl);
+                } catch (error) {
+                    console.error('Error playing trailer:', error);
+                    alert('Failed to play trailer. Please try again later.');
+                }
+            }
+        
+            async function playMovie(movie) {
+                try {
+                    if (movie.snippet) {
+                        // For Nollywood movies (YouTube videos)
+                        playYouTubeTrailer(`https://www.youtube.com/watch?v=${movie.id.videoId}`);
+                    } else {
+                        // For international movies
+                        const movieDetails = await fetchMovieDetails(movie.id);
+                        const dailymotionVideoId = await searchDailymotionVideo(movie.title, movieDetails.runtime);
+                        if (dailymotionVideoId) {
+                            playDailymotionMovie(dailymotionVideoId);
+                        } else {
+                            const youtubeFullMovieId = await searchYouTubeFullMovie(movie.title, movieDetails.runtime);
+                            if (youtubeFullMovieId) {
+                                playYouTubeMovie(youtubeFullMovieId);
+                            } else {
+                                alert('Full movie is not available at the moment.');
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error playing movie:', error);
+                    alert('Failed to play movie. Please try again later.');
+                }
+            }
+        
             backButton.addEventListener('click', closeMovieDetails);
-
+        
             // Initialize the page
+            applyUserSettings();
             displayFavoriteMovies();
         });
-    </script>
+        </script>
+        
     
 </body>
 </html>

@@ -8,10 +8,6 @@
     <title>Sonix Movies</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha384-..." crossorigin="anonymous">
     <link rel="stylesheet" href="styles.css">
-    <!-- Add favicon -->
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <!-- Add manifest for PWA -->
-    <link rel="manifest" href="manifest.json">
 </head>
 <body>
     <header role="banner">
@@ -51,6 +47,9 @@
         </div>
 
         <nav class="desktop-nav" role="navigation" aria-label="Main navigation">
+            <a href="feed.html" id="feed-btn">
+                <i class="fas fa-wifi" aria-hidden="true"></i> Feed
+            </a>
             <a href="watch-later.html" id="watch-later-list">
                 <i class="fas fa-clock" aria-hidden="true"></i> Watch Later
             </a>
@@ -60,13 +59,10 @@
             <button id="settings-button" aria-label="Settings">
                 <i class="fas fa-cog" aria-hidden="true"></i> Settings
             </button>
-            <button id="theme-toggle" aria-label="Toggle theme">
-                <i class="fas fa-moon" aria-hidden="true"></i>
-            </button>
+            
             <button id="profile-button" aria-label="Profile">
                 <i class="fas fa-user" aria-hidden="true"></i>
             </button>
-            
         </nav>
     </header>
 
@@ -74,6 +70,9 @@
         <button id="cancel-menu" class="cancel-menu" aria-label="Close menu">
             <i class="fas fa-times" aria-hidden="true"></i> Cancel
         </button>
+        <a href="feed.html" id="feed-btn">
+            <i class="fas fa-wifi" aria-hidden="true"></i> Feed
+        </a>
         <a href="watch-later.html" id="mobile-watch-later-list">
             <i class="fas fa-clock" aria-hidden="true"></i> Watch Later
         </a>
@@ -123,7 +122,7 @@
         </button>
         <div class="movie-content">
             <div class="modal-media">
-                <img id="modal-poster" src="" alt="" loading="lazy">
+                <img id="modal-poster" src="/placeholder.svg" alt="" loading="lazy">
                 <div id="video-container"></div>
                 <div class="progress-bar-container" role="progressbar" aria-valuemin="0" aria-valuemax="100">
                     <div class="progress-bar"></div>
@@ -136,10 +135,7 @@
                     <button id="watch-trailer">
                         <i class="fas fa-play" aria-hidden="true"></i> Watch Trailer
                     </button>
-                    <button class="download-btn" data-video-url="VIDEO_URL">
-                        <i class="fas fa-download"></i> Download
-                    </button>
-                    
+                    <button id="download-button" class="download-button">Download Movie</button>
                     <button id="watch-movie">
                         <i class="fas fa-film" aria-hidden="true"></i> Watch Movie
                     </button>
@@ -149,12 +145,14 @@
                     <button id="favorite">
                         <i class="fas fa-heart" aria-hidden="true"></i> Favorite
                     </button>
+                    
                 </div>
+                <div id="message-container" role="alert" aria-live="assertive"></div>
                 <div id="movie-details"></div>
             </div>
         </div>
     </div>
-
+    
     <div id="settings-modal" class="modal" role="dialog" aria-labelledby="settings-heading" aria-modal="true">
         <div class="modal-content">
             <button class="close" aria-label="Close settings">&times;</button>
@@ -234,10 +232,10 @@
             <div class="footer-section">
                 <h3>Follow Us</h3>
                 <div class="social-icons">
-                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook" aria-hidden="true"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter" aria-hidden="true"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube" aria-hidden="true"></i></a>
                 </div>
             </div>
         </div>
@@ -246,36 +244,17 @@
         </div>
     </footer>
 
-    <!-- Error Toast -->
-    <div id="error-toast" class="error-toast hidden">
+    <div id="error-toast" class="error-toast hidden" role="alert" aria-live="assertive">
         <div class="error-toast-content">
-            <i class="fas fa-exclamation-circle"></i>
+            <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
             <span id="error-message"></span>
-            <button id="close-error-toast"><i class="fas fa-times"></i></button>
+            <button id="close-error-toast" aria-label="Close error message"><i class="fas fa-times" aria-hidden="true"></i></button>
         </div>
     </div>
 
-    <!-- API Scripts -->
     <script src="https://www.youtube.com/iframe_api"></script>
     <script src="https://api.dmcdn.net/all.js"></script>
-    
-    <!-- Config -->
-    <script src="config.js"></script>
-    
-    <!-- Utility Scripts -->
-    <script src="js/utils/storage.js"></script>
-    <script src="js/utils/errorHandling.js"></script>
-    <script src="js/utils/api.js"></script>
-    
-    <!-- Component Scripts -->
-    <script src="js/components/videoPlayer.js"></script>
-    <script src="js/components/navigation.js"></script>
-    <script src="js/components/modal.js"></script>
-    
-    <!-- Main Application Script -->
     <script src="app.js"></script>
-
-    <!-- Initialize current year -->
     <script>
         document.getElementById('current-year').textContent = new Date().getFullYear();
     </script>
